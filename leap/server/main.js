@@ -9,5 +9,7 @@ Meteor.startup(() => {
   	data.forEach(function(address){
   		Addresses.insert(address);
   	});
+  	Addresses.update({}, {$addToSet: {'shouldDisplay':true}}, {multi: true});
   }
 });
+
