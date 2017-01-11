@@ -1,0 +1,17 @@
+<head>
+  <title>leap</title>
+</head>
+
+<body>
+  <div id="render-target"></div>
+  {{> inputFormTemplate}}
+</body>
+
+<template name = "inputFormTemplate">
+   <form>
+      <input type = "text" name = "lat" placeholder="latitude">
+      <input type = "text" name = "long" placeholder="longitude">
+      <input type = "text" name = "radius" placeholder="radius (in miles)">
+      <input type = "submit" value = "SUBMIT">
+   </form>
+</template>
