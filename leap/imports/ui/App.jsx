@@ -31,9 +31,14 @@ class App extends Component {
   }
 
   renderAddresses() {
-    return this.props.addresses.map((address) => (
-      <Address key={address._id} address={address} />
-    ));
+    let filteredAddresses = this.props.addresses;
+    filteredAddresses = filteredAddresses.filter(address => address.shouldDisplay);
+
+    return filteredAddresses.map((address) => {
+      return (
+        <Address key={address._id} address={address} />
+      );
+    });
   }
  
   render() {
