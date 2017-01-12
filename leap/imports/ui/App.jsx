@@ -15,6 +15,8 @@ class App extends Component {
     const latInput = ReactDOM.findDOMNode(this.refs.latInput).value.trim();
     const lngInput = ReactDOM.findDOMNode(this.refs.lngInput).value.trim();
     const radiusInput = ReactDOM.findDOMNode(this.refs.radiusInput).value.trim();
+
+    Meteor.call('addresses.calcDistance', latInput, lngInput, radiusInput);
     //NEED TO RUN THE FORMULA TO CALCULATE DISTANCE BETWEEN THIS POINT AND EACH POINT IN JSON
     //NEED TO SET DEFAULT OF DISPLAYING ADDRESSES IN DB TO FALSE
     //FOR ALL ADDRESSES THAT HAVE A DISTANCE SMALLER THAN THE RADIUSINPUT, FLAG DISPLAYADDRESS TO TRUE
@@ -31,9 +33,14 @@ class App extends Component {
   }
 
   renderAddresses() {
-    return this.props.addresses.map((address) => (
-      <Address key={address._id} address={address} />
-    ));
+    let filteredAddresses = this.props.addresses;
+    filteredAddresses = filteredAddresses.filter(address => address.shouldDisplay);
+
+    return filteredAddresses.map((address) => {
+      return (
+        <Address key={address._id} address={address} />
+      );
+    });
   }
  
   render() {
