@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
- 
+import { Meteor } from 'meteor/meteor';
+
 import { Addresses } from '../api/addresses.js';
  
 import Address from './Address.jsx';
@@ -66,6 +67,7 @@ class App extends Component {
               ref="radiusInput"
               placeholder="Radius (in miles)"
             />
+            
           </form>
         <ul>
           {this.renderAddresses()}
