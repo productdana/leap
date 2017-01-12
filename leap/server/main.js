@@ -3,13 +3,17 @@ import { Addresses } from '../imports/api/addresses.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
-  console.log(Addresses.find());
-  var data = JSON.parse(Assets.getText("addresses.json"));
+  
+  //clear Addresses collection
+  Addresses.remove({});
+
+  //import addresses.json file & add shouldDisplay field with value of false to each address
+  let data = JSON.parse(Assets.getText("addresses.json"));
   if (Addresses.find().count() === 0) {
   	data.forEach(function(address){
   		Addresses.insert(address);
   	});
-  	Addresses.update({}, {$addToSet: {'shouldDisplay':true}}, {multi: true});
+  	Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
   }
 });
 
