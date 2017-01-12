@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { Meteor } from 'meteor/meteor';
  
+import { Addresses } from '../api/addresses.js';
+
 // Task component - represents a single todo item
 export default class Address extends Component {
   render() {
