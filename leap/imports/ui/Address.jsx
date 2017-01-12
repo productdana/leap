@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
  
 import { Addresses } from '../api/addresses.js';
 

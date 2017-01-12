@@ -15,42 +15,38 @@ if (Meteor.isServer) {
 Meteor.methods({
 
   'addresses.calcDistance': function(latInput, lngInput, radiusInput){
-  	check(parseInt(latInput), Number);
-  	check(parseInt(lngInput), Number);
-  	check(parseInt(radiusInput), Number);
-  	// check(addressId, String);
+  	check(+latInput, Number);
+  	check(+lngInput, Number);
+  	check(+radiusInput, Number);
 
     if(!latInput || !lngInput || !radiusInput){
       throw new Meteor.Error("need all inputs");
     }
-    //TODO: reset all shouldDisplay values to true
-    Addresses.update({}, {$set: {'shouldDisplay':true}}, {multi: true});
+    //reset all shouldDisplay values to false
+    Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
 
     //apply the bottom to every document in the Addresses collection
-    var addressCollection = Addresses.find({}).fetch();
+    let addressCollection = Addresses.find({}).fetch();
     addressCollection.forEach(function(address){
-      // var address = Addresses.findOne(AddressId);
-      var latFromDB = address.latitude;
-      var lngFromDB = address.longitude;
+
+      let latFromDB = address.latitude;
+      let lngFromDB = address.longitude;
 
       //convert degrees to radians
-      var latInputInRadians = latInput * (Math.PI / 180);
-      var lngInputInRadians = lngInput * (Math.PI / 180);
-      var latFromDBInRadians = latFromDB * (Math.PI / 180);
-      var lngFromDBInRadians = lngFromDB * (Math.PI / 180);
+      let latInputInRadians = latInput * (Math.PI / 180);
+      let lngInputInRadians = lngInput * (Math.PI / 180);
+      let latFromDBInRadians = latFromDB * (Math.PI / 180);
+      let lngFromDBInRadians = lngFromDB * (Math.PI / 180);
 
-      var deltaLambda = Math.abs(lngInputInRadians - lngFromDBInRadians);
+      let deltaLambda = Math.abs(lngInputInRadians - lngFromDBInRadians);
       
       //Math.acos returns NAN if its parameter is outside the range -1 to 1
-      var centralAngle = Math.acos(((Math.sin(latInputInRadians) * Math.sin(latFromDBInRadians))) + (Math.cos(latInputInRadians) * Math.cos(latFromDBInRadians) * Math.cos(deltaLambda)));
-      console.log('centralAngle:', centralAngle);
-      var radiusOfEarth = 3959; //3,959 miles
-      var distance = radiusOfEarth * centralAngle;
+      let centralAngle = Math.acos(((Math.sin(latInputInRadians) * Math.sin(latFromDBInRadians))) + (Math.cos(latInputInRadians) * Math.cos(latFromDBInRadians) * Math.cos(deltaLambda)));
+      let radiusOfEarth = 3959; //3,959 miles
+      let distance = radiusOfEarth * centralAngle;
 
-      console.log('distance:', distance, 'radiusInput:', radiusInput);
-      if (distance > radiusInput){
-        console.log('this address is outside the radius bounds');
-        Addresses.update({latitude: latFromDB, longitude: lngFromDB}, {$set: {'shouldDisplay': false}});
+      if (distance < radiusInput){
+        Addresses.update({latitude: latFromDB, longitude: lngFromDB}, {$set: {'shouldDisplay': true}});
       }
     });
 
@@ -61,22 +57,17 @@ if (Meteor.isClient) {
   Template.inputForm.events({
     'submit form': function(event){
       event.preventDefault();
-      console.log('form submitted!');
-      const latInput = event.target.latInput.value;
-      const lngInput = event.target.lngInput.value;
-      const radiusInput = event.target.radiusInput.value;
-      console.log('inputs are:', latInput, lngInput, radiusInput);
-      // const latInput = ReactDOM.findDOMNode(this.refs.latInput).value.trim();
-      // const lngInput = ReactDOM.findDOMNode(this.refs.lngInput).value.trim();
-      // const radiusInput = ReactDOM.findDOMNode(this.refs.radiusInput).value.trim();
+
+      let latInput = event.target.latInput.value;
+      let lngInput = event.target.lngInput.value;
+      let radiusInput = event.target.radiusInput.value;
 
       Meteor.call('addresses.calcDistance', latInput, lngInput, radiusInput);
       
       // Clear form
-      // ReactDOM.findDOMNode(this.refs.latInput).value = '';
-      // ReactDOM.findDOMNode(this.refs.lngInput).value = '';
-      // ReactDOM.findDOMNode(this.refs.radiusInput).value = '';
-      // console.log('after clearing inputs are:', latInput, lngInput, radiusInput);
+      event.target.latInput.value = '';
+      event.target.lngInput.value = '';
+      event.target.radiusInput.value = '';
     }
   });
 }
