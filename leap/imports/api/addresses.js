@@ -14,11 +14,13 @@ if (Meteor.isServer) {
 
 Meteor.methods({
 
-  'addresses.calcDistance': function(latInput, lngInput, radiusInput){
-  	check(+latInput, Number);
+  'addresses.calcDistance': function(addressInput, latInput, lngInput, radiusInput){
+  	check(addressInput, String);
+    check(+latInput, Number);
   	check(+lngInput, Number);
   	check(+radiusInput, Number);
 
+    //TODO: need to display error messages for input validation to UI - choice between address or lat/lng
     if(!latInput || !lngInput || !radiusInput){
       throw new Meteor.Error("need all inputs");
     }
@@ -58,13 +60,15 @@ if (Meteor.isClient) {
     'submit form': function(event){
       event.preventDefault();
 
+      let addressInput = event.target.addressInput.value;
       let latInput = event.target.latInput.value;
       let lngInput = event.target.lngInput.value;
       let radiusInput = event.target.radiusInput.value;
 
-      Meteor.call('addresses.calcDistance', latInput, lngInput, radiusInput);
+      Meteor.call('addresses.calcDistance', addressInput, latInput, lngInput, radiusInput);
       
       // Clear form
+      event.target.addressInput.value = '';
       event.target.latInput.value = '';
       event.target.lngInput.value = '';
       event.target.radiusInput.value = '';

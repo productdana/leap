@@ -28,7 +28,7 @@ class App extends Component {
         <header>
           <h1>leap</h1>
         </header>
-          <p>Enter inputs below to see a list of addresses within the radius.</p>
+          <p>Enter a radius and your choice of an address or latitude/longitude coordinates below to see a list of addresses within the radius.</p>
 
         <ul>
           {this.renderAddresses()}
