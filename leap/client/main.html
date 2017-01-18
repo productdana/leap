@@ -10,13 +10,13 @@
 
 <template name = "inputForm">
    <form>
-   		<input type = "text" name = "addressInput" placeholder="address" class="addressInput">
+   		<input type = "text" name = "addressInput" placeholder="address" className="addressInput" ref="addressInput">
    		<br>
-      <input type = "text" name = "latInput" placeholder="latitude">
-      <input type = "text" name = "lngInput" placeholder="longitude">
-      <input type = "text" name = "radiusInput" placeholder="radius (in miles)*" required>
+      <input type = "text" name = "latInput" placeholder="latitude" ref="latInput">
+      <input type = "text" name = "lngInput" placeholder="longitude" ref="lngInput">
+      <input type = "text" name = "radiusInput" placeholder="radius (in miles)" ref="radiusInput" required>
       <br>
-      <input type = "submit" value = "submit" class="submitButton">
+      <input type = "submit" value = "submit" className="submitButton">
    </form>
 </template>
 

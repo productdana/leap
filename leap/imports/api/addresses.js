@@ -14,44 +14,36 @@ if (Meteor.isServer) {
 
 Meteor.methods({
 
-  'addresses.calcDistance': function(addressInput, latInput, lngInput, radiusInput){
+  'addresses.calcDistance': function(latInput, lngInput, radiusInput){
   	
     check(+latInput, Number);
   	check(+lngInput, Number);
   	check(+radiusInput, Number);
 
-      //reset all shouldDisplay values to false
-      // Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
+    //apply the bottom to every document in the Addresses collection
+    let addressCollection = Addresses.find({}).fetch();
+    addressCollection.forEach(function(address){
 
-      //TODO: if address was provided, convert that to a lat/lng
+      let latFromDB = address.latitude;
+      let lngFromDB = address.longitude;
 
-      //apply the bottom to every document in the Addresses collection
-      let addressCollection = Addresses.find({}).fetch();
-      addressCollection.forEach(function(address){
+      //convert degrees to radians
+      let latInputInRadians = latInput * (Math.PI / 180);
+      let lngInputInRadians = lngInput * (Math.PI / 180);
+      let latFromDBInRadians = latFromDB * (Math.PI / 180);
+      let lngFromDBInRadians = lngFromDB * (Math.PI / 180);
 
-        let latFromDB = address.latitude;
-        let lngFromDB = address.longitude;
+      let deltaLambda = Math.abs(lngInputInRadians - lngFromDBInRadians);
+      
+      //Math.acos returns NAN if its parameter is outside the range -1 to 1
+      let centralAngle = Math.acos(((Math.sin(latInputInRadians) * Math.sin(latFromDBInRadians))) + (Math.cos(latInputInRadians) * Math.cos(latFromDBInRadians) * Math.cos(deltaLambda)));
+      let radiusOfEarth = 3959; //3,959 miles
+      let distance = radiusOfEarth * centralAngle;
 
-        //convert degrees to radians
-        let latInputInRadians = latInput * (Math.PI / 180);
-        let lngInputInRadians = lngInput * (Math.PI / 180);
-        let latFromDBInRadians = latFromDB * (Math.PI / 180);
-        let lngFromDBInRadians = lngFromDB * (Math.PI / 180);
-
-        let deltaLambda = Math.abs(lngInputInRadians - lngFromDBInRadians);
-        
-        //Math.acos returns NAN if its parameter is outside the range -1 to 1
-        let centralAngle = Math.acos(((Math.sin(latInputInRadians) * Math.sin(latFromDBInRadians))) + (Math.cos(latInputInRadians) * Math.cos(latFromDBInRadians) * Math.cos(deltaLambda)));
-        let radiusOfEarth = 3959; //3,959 miles
-        let distance = radiusOfEarth * centralAngle;
-
-        if (distance < radiusInput){
-          Addresses.update({latitude: latFromDB, longitude: lngFromDB}, {$set: {'shouldDisplay': true}});
-        }
-      });
-    // }
-
-
+      if (distance < radiusInput){
+        Addresses.update({latitude: latFromDB, longitude: lngFromDB}, {$set: {'shouldDisplay': true}});
+      }
+    });
   },
   'addresses.clearDisplays': function(){
     Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
