@@ -20,19 +20,8 @@ Meteor.methods({
   	check(+lngInput, Number);
   	check(+radiusInput, Number);
 
-    
-    //TODO: need to display error messages for input validation to UI - choice between address or lat/lng
-    // console.log('!latInput:', !latInput);
-    // if(!latInput || !lngInput || !radiusInput){
-      
-    //   this.setState({
-    //     inputValidationMessage: 'need inputs dude',
-    //   });
-
-    // } else {
-
       //reset all shouldDisplay values to false
-      Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
+      // Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
 
       //TODO: if address was provided, convert that to a lat/lng
 
@@ -63,6 +52,9 @@ Meteor.methods({
     // }
 
 
+  },
+  'addresses.clearDisplays': function(){
+    Addresses.update({}, {$set: {'shouldDisplay':false}}, {multi: true});
   },
 });
 

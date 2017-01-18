@@ -9,58 +9,47 @@ import Address from './Address.jsx';
  
 // App component - represents the whole app
 class App extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
  
     this.state = {
       inputValidationMessage: '',
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-
   }
   
   handleSubmit(event) {
     event.preventDefault();
-
+    Meteor.call('addresses.clearDisplays');
     // Find the text field via the React ref
     const addressInput = ReactDOM.findDOMNode(this.refs.addressInput).value.trim();
     const latInput = ReactDOM.findDOMNode(this.refs.latInput).value.trim();
     const lngInput = ReactDOM.findDOMNode(this.refs.lngInput).value.trim();
     const radiusInput = ReactDOM.findDOMNode(this.refs.radiusInput).value.trim();
-    console.log('addressInput: ',addressInput);
+
     if(addressInput || (latInput && lngInput)){
       this.setState({
         inputValidationMessage: '',
       });
 
       Meteor.call('addresses.calcDistance', addressInput, latInput, lngInput, radiusInput);
+
+      // Clear form
+      ReactDOM.findDOMNode(this.refs.addressInput).value = '';
+      ReactDOM.findDOMNode(this.refs.latInput).value = '';
+      ReactDOM.findDOMNode(this.refs.lngInput).value = '';
+      ReactDOM.findDOMNode(this.refs.radiusInput).value = '';
+    } else if(latInput || lngInput){
+      this.setState({
+        inputValidationMessage: 'Please enter both a latitude and longitude',
+      });
     } else {
       this.setState({
-        inputValidationMessage: 'need address dude',
+        inputValidationMessage: 'Please enter one of the following: 1) an address or 2) a latitude and longitude',
       });
-      //TODO: clear previous output results
-    }
-    // Clear form
-    ReactDOM.findDOMNode(this.refs.addressInput).value = '';
-    ReactDOM.findDOMNode(this.refs.latInput).value = '';
-    ReactDOM.findDOMNode(this.refs.lngInput).value = '';
-    ReactDOM.findDOMNode(this.refs.radiusInput).value = '';
-  }
+    } 
 
-  // validateForm() {
-  //   // Find the text field via the React ref
-  //   const addressInput = ReactDOM.findDOMNode(this.refs.addressInput).value.trim();
-  //   console.log('addressInput: ',addressInput);
-  //   if(!addressInput){
-  //     this.setState({
-  //       inputValidationMessage: 'need address dude',
-  //     });
-  //   } else {
-  //     this.setState({
-  //       inputValidationMessage: '',
-  //     });
-  //   }
-  // }
+  }
 
   renderAddresses() {
     let filteredAddresses = this.props.addresses;
@@ -85,7 +74,7 @@ class App extends Component {
           <form onSubmit={this.handleSubmit.bind(this)}>
             <input type = "text" name = "addressInput" placeholder="address" className="addressInput" ref="addressInput" />
             <br />
-            <input type = "text" name = "latInput" placeholder="latitude in render" ref="latInput" />
+            <input type = "text" name = "latInput" placeholder="latitude" ref="latInput" />
             <input type = "text" name = "lngInput" placeholder="longitude" ref="lngInput" />
             <input type = "text" name = "radiusInput" placeholder="radius (in miles)*" ref="radiusInput" required />
             <br />
