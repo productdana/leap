@@ -4,15 +4,19 @@
 
 <body>
   <div id="render-target"></div>
-  {{> inputForm}}
+ 
+
 </body>
 
 <template name = "inputForm">
    <form>
+   		<input type = "text" name = "addressInput" placeholder="address" class="addressInput">
+   		<br>
       <input type = "text" name = "latInput" placeholder="latitude">
       <input type = "text" name = "lngInput" placeholder="longitude">
-      <input type = "text" name = "radiusInput" placeholder="radius (in miles)">
-      <input type = "submit" value = "submit">
+      <input type = "text" name = "radiusInput" placeholder="radius (in miles)*" required>
+      <br>
+      <input type = "submit" value = "submit" class="submitButton">
    </form>
 </template>
 

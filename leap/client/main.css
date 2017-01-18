@@ -35,3 +35,16 @@ ul {
 	color: #315481;
 	text-align: left;	
 }
+
+.addressInput {
+  width: 398px;
+}
+
+.submitButton {
+  width: 100px;
+ 
+}
+
+#formValidation {
+  color: red;
+}
